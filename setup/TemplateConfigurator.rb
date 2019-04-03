@@ -4,13 +4,14 @@ require 'colored2'
 module Pod
   class TemplateConfigurator
 
-    attr_reader :pod_name, :pods_for_podfile, :prefixes, :username, :email
+    attr_reader :pod_name, :pods_for_podfile, :prefixes, :username, :email, :bundle_id_prefix
 
-    def initialize(pod_name)
+    def initialize(pod_name, bundle_id_prefix)
       @pod_name = pod_name
       @pods_for_podfile = []
       @prefixes = []
       @message_bank = MessageBank.new(self)
+      @bundle_id_prefix = bundle_id_prefix
     end
 
     # def ask(question)
@@ -68,7 +69,7 @@ module Pod
     # end
 
     def run
-      @message_bank.welcome_message
+      # @message_bank.welcome_message
 
       puts 'config ios proj'
       ConfigureIOS.perform(configurator: self)

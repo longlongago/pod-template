@@ -24,7 +24,7 @@ module Pod
         "TODAYS_YEAR" => @configurator.year,
         "PROJECT" => @configurator.pod_name,
         "CPD" => @prefix,
-        "org.cocoapods.demo" => "com.tencent"
+        "org.cocoapods.demo" => @configurator.bundle_id_prefix
       }
       replace_internal_project_settings
 
