@@ -36,7 +36,7 @@ module Pod
 
       puts "\n------------------------------"
       puts ""
-      puts "from longlongago====To get you started we need to ask a few questions, this should only take a minute."
+      puts "To get you started we need to ask a few questions, this should only take a minute."
       puts ""
 
       has_run_before = `defaults read org.cocoapods.pod-template HasRunbefore`.chomp == "1"
@@ -64,7 +64,7 @@ module Pod
       puts " Ace! you're ready to go!"
       puts " We will start you off by opening your project in Xcode"
       pod_name = @configurator.pod_name
-      run_command "open 'Example/#{pod_name}.xcworkspace'", "open '#{pod_name}/Example/#{pod_name}.xcworkspace'"
+      run_command "open '#{pod_name}/#{pod_name}.xcworkspace'", "open '#{pod_name}/#{pod_name}/#{pod_name}.xcworkspace'"
     end
 
 

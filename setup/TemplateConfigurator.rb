@@ -4,7 +4,7 @@ require 'colored2'
 module Pod
   class TemplateConfigurator
 
-    attr_reader :pod_name, :pods_for_podfile, :prefixes, :test_example_file, :username, :email
+    attr_reader :pod_name, :pods_for_podfile, :prefixes, :username, :email
 
     def initialize(pod_name)
       @pod_name = pod_name
@@ -13,87 +13,76 @@ module Pod
       @message_bank = MessageBank.new(self)
     end
 
-    def ask(question)
-      answer = ""
-      loop do
-        puts "\n#{question}?"
+    # def ask(question)
+    #   answer = ""
+    #   loop do
+    #     puts "\n#{question}?"
 
-        @message_bank.show_prompt
-        answer = gets.chomp
+    #     @message_bank.show_prompt
+    #     answer = gets.chomp
 
-        break if answer.length > 0
+    #     break if answer.length > 0
 
-        print "\nYou need to provide an answer."
-      end
-      answer
-    end
+    #     print "\nYou need to provide an answer."
+    #   end
+    #   answer
+    # end
 
-    def ask_with_answers(question, possible_answers)
+    # def ask_with_answers(question, possible_answers)
 
-      print "\n#{question}? ["
+    #   print "\n#{question}? ["
 
-      print_info = Proc.new {
+    #   print_info = Proc.new {
 
-        possible_answers_string = possible_answers.each_with_index do |answer, i|
-           _answer = (i == 0) ? answer.underlined : answer
-           print " " + _answer
-           print(" /") if i != possible_answers.length-1
-        end
-        print " ]\n"
-      }
-      print_info.call
+    #     possible_answers_string = possible_answers.each_with_index do |answer, i|
+    #        _answer = (i == 0) ? answer.underlined : answer
+    #        print " " + _answer
+    #        print(" /") if i != possible_answers.length-1
+    #     end
+    #     print " ]\n"
+    #   }
+    #   print_info.call
 
-      answer = ""
+    #   answer = ""
 
-      loop do
-        @message_bank.show_prompt
-        answer = gets.downcase.chomp
+    #   loop do
+    #     @message_bank.show_prompt
+    #     answer = gets.downcase.chomp
 
-        answer = "yes" if answer == "y"
-        answer = "no" if answer == "n"
+    #     answer = "yes" if answer == "y"
+    #     answer = "no" if answer == "n"
 
-        # default to first answer
-        if answer == ""
-          answer = possible_answers[0].downcase
-          print answer.yellow
-        end
+    #     # default to first answer
+    #     if answer == ""
+    #       answer = possible_answers[0].downcase
+    #       print answer.yellow
+    #     end
 
-        break if possible_answers.map { |a| a.downcase }.include? answer
+    #     break if possible_answers.map { |a| a.downcase }.include? answer
 
-        print "\nPossible answers are ["
-        print_info.call
-      end
+    #     print "\nPossible answers are ["
+    #     print_info.call
+    #   end
 
-      answer
-    end
+    #   answer
+    # end
 
     def run
       @message_bank.welcome_message
 
-      platform = self.ask_with_answers("What platform do you want to use?", ["iOS", "macOS"]).to_sym
+      puts 'config ios proj'
+      ConfigureIOS.perform(configurator: self)
 
-      case platform
-        when :macos
-          ConfigureMacOSSwift.perform(configurator: self)
-        when :ios
-          framework = self.ask_with_answers("What language do you want to use?", ["Swift", "ObjC"]).to_sym
-          case framework
-            when :swift
-              ConfigureSwift.perform(configurator: self)
-
-            when :objc
-              ConfigureIOS.perform(configurator: self)
-          end
-      end
-
+      FileUtils.mv "PROJECT", "#{pod_name}"
+      puts 'replace_variables_in_files'
       replace_variables_in_files
       clean_template_files
       rename_template_files
       add_pods_to_podfile
       customise_prefix
-      rename_classes_folder
-      ensure_carthage_compatibility
-      reinitialize_git_repo
+      # rename_classes_folder
+      # ensure_carthage_compatibility
+      # reinitialize_git_repo
       run_pod_install
 
       @message_bank.farewell_message
@@ -101,20 +90,20 @@ module Pod
 
     #----------------------------------------#
 
-    def ensure_carthage_compatibility
-      FileUtils.ln_s('Example/Pods/Pods.xcodeproj', '_Pods.xcodeproj')
-    end
+    # def ensure_carthage_compatibility
+    #   FileUtils.ln_s("#{pod_name}/Pods/Pods.xcodeproj", '_Pods.xcodeproj')
+    # end
 
     def run_pod_install
       puts "\nRunning " + "pod install".magenta + " on your new library."
       puts ""
 
-      Dir.chdir("Example") do
+      Dir.chdir("#{pod_name}") do
         system "pod install"
       end
 
-      `git add Example/#{pod_name}.xcodeproj/project.pbxproj`
-      `git commit -m "Initial commit"`
+      # `git add #{pod_name}/#{pod_name}.xcodeproj/project.pbxproj`
+      # `git commit -m "Initial commit"`
     end
 
     def clean_template_files
@@ -124,7 +113,7 @@ module Pod
     end
 
     def replace_variables_in_files
-      file_names = ['POD_LICENSE', 'POD_README.md', 'NAME.podspec', '.travis.yml', podfile_path]
+      file_names = ['POD_LICENSE', 'POD_README.md', '.travis.yml', podfile_path]
       file_names.each do |file_name|
         text = File.read(file_name)
         text.gsub!("${POD_NAME}", @pod_name)
@@ -146,6 +135,9 @@ module Pod
       podfile_content = @pods_for_podfile.map do |pod|
         "pod '" + pod + "'"
       end.join("\n    ")
+
+      puts "====add #{podfile_path} with content:#{podfile_content}"
+
       podfile.gsub!("${INCLUDED_PODS}", podfile_content)
       File.open(podfile_path, "w") { |file| file.puts podfile }
     end
@@ -155,37 +147,38 @@ module Pod
     end
 
     def customise_prefix
-      prefix_path = "Example/Tests/Tests-Prefix.pch"
+      puts "begin custom prefix:#{@prefixes}"
+      prefix_path = "#{pod_name}/Tests/Tests-Prefix.pch"
       return unless File.exists? prefix_path
 
       pch = File.read prefix_path
       pch.gsub!("${INCLUDED_PREFIXES}", @prefixes.join("\n  ") )
       File.open(prefix_path, "w") { |file| file.puts pch }
+      puts "begin custom prefix"
     end
 
     def set_test_framework(test_type, extension, folder)
-      content_path = "setup/test_examples/" + test_type + "." + extension
-      tests_path = "templates/" + folder + "/Example/Tests/Tests." + extension
+      content_path = "setup/test_files/" + test_type + "." + extension
+      tests_path = "templates/" + folder + "/PROJECT/Tests/Tests." + extension
       tests = File.read tests_path
-      tests.gsub!("${TEST_EXAMPLE}", File.read(content_path) )
+      tests.gsub!("${TEST_CONTENTS}", File.read(content_path) )
       File.open(tests_path, "w") { |file| file.puts tests }
     end
 
     def rename_template_files
       FileUtils.mv "POD_README.md", "README.md"
       FileUtils.mv "POD_LICENSE", "LICENSE"
-      FileUtils.mv "NAME.podspec", "#{pod_name}.podspec"
     end
 
-    def rename_classes_folder
-      FileUtils.mv "Pod", @pod_name
-    end
+    # def rename_classes_folder
+    #   FileUtils.mv "Pod", @pod_name+"1"
+    # end
 
-    def reinitialize_git_repo
-      `rm -rf .git`
-      `git init`
-      `git add -A`
-    end
+    # def reinitialize_git_repo
+    #   `rm -rf .git`
+    #   `git init`
+    #   `git add -A`
+    # end
 
     def validate_user_details
         return (user_email.length > 0) && (user_name.length > 0)
@@ -216,7 +209,7 @@ module Pod
     end
 
     def podfile_path
-      'Example/Podfile'
+      "#{pod_name}/Podfile"
     end
 
     #----------------------------------------#

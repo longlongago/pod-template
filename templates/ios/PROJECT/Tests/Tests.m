@@ -6,4 +6,4 @@
 //  Copyright (c) TODAYS_YEAR PROJECT_OWNER. All rights reserved.
 //
 
-${TEST_EXAMPLE}
+${TEST_CONTENTS}
