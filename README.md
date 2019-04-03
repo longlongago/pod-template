@@ -13,6 +13,10 @@ blabla
 
 blabla
 
+```
+pod lib create __NAME__ --template-url=https://github.com/longlongago/pod-template.git --verbose
+```
+
 ## Requirements:
 
 - CocoaPods 1.0.0+
