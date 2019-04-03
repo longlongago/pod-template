@@ -59,7 +59,6 @@ module Pod
           end
       end
 
-      configurator.add_pod_to_podfile "AFNetworking"
       prefix = nil
 
       loop do
