@@ -61,15 +61,18 @@ module Pod
 
       prefix = nil
 
-      loop do
-        # prefix = configurator.ask("What is your class prefix")
-        prefix = 'IP'
+      # loop do
+      #   # prefix = configurator.ask("What is your class prefix")
 
-        if prefix.include?(' ')
+      #   if prefix.include?(' ')
+      #     puts 'Your class prefix cannot contain spaces.'.red
+      #   else
+      #     break
+      #   end
+      # end
+      prefix = @configurator.class_prefix
+      if prefix.include?(' ')
           puts 'Your class prefix cannot contain spaces.'.red
-        else
-          break
-        end
       end
 
       puts "prefix:#{prefix}"

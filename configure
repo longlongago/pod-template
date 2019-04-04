@@ -6,6 +6,6 @@ Dir[File.join($current_dir, "setup/*.rb")].each do |file|
 end
 puts "ARGV:#{ARGV}"
 pod_name = ARGV.shift
-config = Pod::TemplateConfigurator.new(pod_name, "com.tencent.test")
+config = Pod::TemplateConfigurator.new(pod_name, "com.tencent.test", 'IPX')
 config.add_pod_to_podfile("SDWebImage', '~> 4.0")
 config.run
