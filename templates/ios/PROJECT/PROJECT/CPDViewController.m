@@ -8,6 +8,7 @@
 
 #import "CPDViewController.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import <Login/Login.h>
 
 @interface CPDViewController ()
 
