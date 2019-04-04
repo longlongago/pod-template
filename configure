@@ -7,5 +7,5 @@ end
 puts "ARGV:#{ARGV}"
 pod_name = ARGV.shift
 config = Pod::TemplateConfigurator.new(pod_name, "com.tencent.test")
-config.add_pod_to_podfile("SDWebImage', '~> 3.0")
+config.add_pod_to_podfile("SDWebImage', '~> 4.0")
 config.run
