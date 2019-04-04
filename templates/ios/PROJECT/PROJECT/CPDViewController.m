@@ -28,6 +28,11 @@
     NSURL* url = [[NSURL alloc] initWithString:@"https://pic1.zhimg.com/v2-3b4fc7e3a1195a081d0259246c38debc_1200x500.jpg"];
     [view sd_setImageWithURL:url];
     [self.view addSubview:view];
+    
+    NSDictionary *dic = @{kLoginPlatformAPPIdQQ:@"1108071150",kLoginPlatformAPPIdWeChat:@"wxa6755aa6eaa049e1"};
+    [[RAAPPLoginService sharedInstance] configureAppIds:dic];
+    [[RAAPPLoginService sharedInstance] autoLogin];
+
 }
 
 

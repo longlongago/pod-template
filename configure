@@ -8,4 +8,5 @@ puts "ARGV:#{ARGV}"
 pod_name = ARGV.shift
 config = Pod::TemplateConfigurator.new(pod_name, "com.tencent.test", 'IPX', 'haven', 'haven@tencent.com')
 config.add_pod_to_podfile("SDWebImage', '~> 4.0")
+config.add_pod_to_podfile("Login', :git => 'http://git.code.oa.com/Awesome-iOS/Login.git")
 config.run
