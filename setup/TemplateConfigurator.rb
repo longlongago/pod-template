@@ -6,13 +6,15 @@ module Pod
 
     attr_reader :pod_name, :pods_for_podfile, :prefixes, :username, :email, :bundle_id_prefix, :class_prefix
 
-    def initialize(pod_name, bundle_id_prefix, class_prefix)
+    def initialize(pod_name, bundle_id_prefix, class_prefix, username='', email='')
       @pod_name = pod_name
       @pods_for_podfile = []
       @prefixes = []
       @message_bank = MessageBank.new(self)
       @bundle_id_prefix = bundle_id_prefix
       @class_prefix = class_prefix
+      @username = username
+      @email = email
     end
 
     # def ask(question)
@@ -156,7 +158,7 @@ module Pod
       pch = File.read prefix_path
       pch.gsub!("${INCLUDED_PREFIXES}", @prefixes.join("\n  ") )
       File.open(prefix_path, "w") { |file| file.puts pch }
-      puts "begin custom prefix"
+      puts "end custom prefix"
     end
 
     def set_test_framework(test_type, extension, folder)
@@ -189,7 +191,7 @@ module Pod
     #----------------------------------------#
 
     def user_name
-      (ENV['GIT_COMMITTER_NAME'] || github_user_name || `git config user.name` || `<GITHUB_USERNAME>` ).strip
+      (@username || ['GIT_COMMITTER_NAME'] || github_user_name || `git config user.name` || `<GITHUB_USERNAME>` ).strip
     end
 
     def github_user_name
@@ -199,7 +201,7 @@ module Pod
     end
 
     def user_email
-      (ENV['GIT_COMMITTER_EMAIL'] || `git config user.email`).strip
+      (@email || ['GIT_COMMITTER_EMAIL'] || `git config user.email`).strip
     end
 
     def year
