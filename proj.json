@@ -6,6 +6,6 @@
     "email" : "haven@tencent.com",
     "third_modules" : [
         "SDWebImage', '~> 4.0",
-        "Login', git: => 'http://git.code.oa.com/Awesome-iOS/Login.git"
+        "Login', :git => 'http://git.code.oa.com/Awesome-iOS/Login.git"
     ]
 }
