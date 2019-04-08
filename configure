@@ -4,9 +4,23 @@ $current_dir = File.dirname(File.expand_path(__FILE__))
 Dir[File.join($current_dir, "setup/*.rb")].each do |file|
   require_relative(file)
 end
-puts "ARGV:#{ARGV}"
-pod_name = ARGV.shift
-config = Pod::TemplateConfigurator.new(pod_name, "com.tencent.test", 'IPX', 'haven', 'haven@tencent.com')
-config.add_pod_to_podfile("SDWebImage', '~> 4.0")
-config.add_pod_to_podfile("Login', :git => 'http://git.code.oa.com/Awesome-iOS/Login.git")
+
+require 'json'
+proj_json = File.read(./proj.json)
+proj = JSON.parse(proj_json)
+# puts "ARGV:#{ARGV}"
+pod_name = proj['projname']
+bundle_prefix = proj['bundle_prefix']
+class_prefix = proj['class_prefix']
+user_name = proj['user_name']
+email = proj['email']
+third_modules = proj['third_modules']
+
+puts '============pod_name, bundle_prefix, class_prefix, user_name, email, third_modules:'
+puts pod_name, bundle_prefix, class_prefix, user_name, email, third_modules
+puts 'end======'
+config = Pod::TemplateConfigurator.new(pod_name, bundle_prefix, class_prefix, user_name, email)
+third_modules.each{ |m| config.add_pod_to_podfile(m)}
+# config.add_pod_to_podfile("SDWebImage', '~> 4.0")
+# config.add_pod_to_podfile("Login', :git => 'http://git.code.oa.com/Awesome-iOS/Login.git")
 config.run
