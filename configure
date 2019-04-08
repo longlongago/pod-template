@@ -6,7 +6,7 @@ Dir[File.join($current_dir, "setup/*.rb")].each do |file|
 end
 
 require 'json'
-proj_json = File.read(./proj.json)
+proj_json = File.read('./proj.json')
 proj = JSON.parse(proj_json)
 # puts "ARGV:#{ARGV}"
 pod_name = proj['projname']
